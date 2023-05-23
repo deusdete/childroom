@@ -25,7 +25,7 @@ export default function Hero() {
         backgroundSize: "cover",
         display: "flex",
         flexDirection: "column",
-        minHeight: isMobile ? '80vh' : "100vh",
+        minHeight: isMobile ? '80vh' : "80vh",
         justifyContent: "center",
       }}
     >

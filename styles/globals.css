@@ -34,3 +34,31 @@ body {
   height: "100%";
   width: "100%";
 }
+
+.historico{
+  overflow: auto;
+  max-height: 70%;
+  height: 28em;
+}
+
+.historico > div{
+  margin-right: 1em;
+  padding-bottom: .7em;
+  margin-bottom: .7em;
+  border-bottom: 1px solid #F0F3FC;
+}
+.historico > div img{
+  margin-right: .7em;
+  margin-bottom: 0!important;
+}
+.historico > div p{
+  margin-top: 0em;
+}
+
+.perfil > div{
+  padding: 0;
+}
+
+.perfil .usuario{
+  margin-left: .7em;
+}

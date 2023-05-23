@@ -12,27 +12,27 @@ import Image from "next/image";
 const rommThemes = [
   {
     name: "Room1",
-    image: "/room1.png",
+    image: "/room-01.jpg",
   },
   {
     name: "Room2",
-    image: "/room2.png",
+    image: "/room-02.jpg",
   },
   {
     name: "Room3",
-    image: "/room3.png",
+    image: "/room-03.jpg",
   },
   {
     name: "Room4",
-    image: "/room4.png",
+    image: "/room-04.jpg",
   },
   {
     name: "Room5",
-    image: "/room3.png",
+    image: "/room-05.jpg",
   },
   {
     name: "Room6",
-    image: "/room4.png",
+    image: "/room-06.jpg",
   },
 ];
 
@@ -51,10 +51,10 @@ export default function HeroThemaRoom() {
           >
             <Grid2 xs={6}>
               <img
-                src={"/1-new.jpg"}
+                src={"/quarto-01.jpg"}
                 style={{
                   width: "100%",
-                  maxWidth: 450,
+                  maxWidth: "auto",
                   height: "auto",
                   padding: 0,
                   margin: 0,
@@ -65,10 +65,10 @@ export default function HeroThemaRoom() {
             </Grid2>
             <Grid2 xs={6}>
               <img
-                src={"/1-new.jpg"}
+                src={"/quarto-02.jpg"}
                 style={{
                   width: "100%",
-                  maxWidth: 450,
+                  maxWidth: "auto",
                   height: "auto",
                   padding: 0,
                   margin: 0,
@@ -100,14 +100,14 @@ export default function HeroThemaRoom() {
         >
           {rommThemes.map((item, index) => (
             <Grid2 xs={2} sm={4} md={4} key={index}>
-              <a href={item.name} target="_blank" rel="noreferrer">
                 <img
                   alt="Original photo of a room"
                   src={item.image}
                   className="w-full object-cover h-40 rounded-2xl"
                   style={{
+                    display: "flex",
                     width: "100%",
-                    maxWidth: 300,
+                    maxWidth: "auto",
                     height: "auto",
                     padding: 0,
                     margin: 0,
@@ -115,7 +115,6 @@ export default function HeroThemaRoom() {
                   }}
                   loading="lazy"
                 />
-              </a>
             </Grid2>
           ))}
         </Grid2>
