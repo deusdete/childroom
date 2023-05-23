@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 
 const navLinks = [
   { title: "Termos e condições", path: "/" },
-  { title: "Política de privacidad", path: "/" },
+  { title: "Política de privacidade", path: "/" },
   { title: "Fale conosco", path: "/" },
 ];
 const Header: FC<HeaderProps> = (props) => {
@@ -54,7 +54,7 @@ const Header: FC<HeaderProps> = (props) => {
   return (
     <footer>
       <Box sx={{ backgroundColor: "#803DA9" }}>
-        <Toolbar sx={{ height: 150 }}>
+        <Toolbar sx={{ height: 100 }}>
           <Container maxWidth="lg">
             <Stack
               direction="row"

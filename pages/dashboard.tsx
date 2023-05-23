@@ -1,4 +1,5 @@
 import Head from "next/head";
+import * as React from 'react';
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Footer from "../components/Footer";
@@ -9,6 +10,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import HeaderDashboard from "../components/HeaderDashboard";
 import Grid2 from "@mui/material/Unstable_Grid2";
+
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import {
   Avatar,
   Box,
@@ -49,34 +56,46 @@ const useStyles = makeStyles({
 const imagens = [
   {
     name: "Room1",
-    image: "/room1.png",
+    image: "/room-01.jpg",
   },
   {
     name: "Room2",
-    image: "/room2.png",
+    image: "/room-02.jpg",
   },
   {
     name: "Room3",
-    image: "/room3.png",
+    image: "/room-03.jpg",
   },
   {
     name: "Room4",
-    image: "/room4.png",
+    image: "/room-04.jpg",
   },
   {
     name: "Room5",
-    image: "/room3.png",
+    image: "/room-05.jpg",
   },
   {
     name: "Room6",
-    image: "/room4.png",
+    image: "/room-06.jpg",
   },
 ];
 
 export default function Dashboard({ rooms }: { rooms: Room[] }) {
   const { data: session } = useSession();
 
+  const [expanded, setExpanded] = React.useState<string | false>(false);
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
+
   const classes = useStyles();
+  
+  const [loading, setLoading] = React.useState(true);
+  function handleClick() {
+    setLoading(true);
+  }
 
   return (
     <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -98,61 +117,77 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
               >
                 <Stack direction="column" spacing={2} sx={{ p: 2 }}>
                   <Typography className={classes.title}>Meu perfil</Typography>
-                  <Box sx={{ display: "flex", flexDirection: "row" }}>
-                    <Avatar alt="Remy Sharp" src="/avatar.png" />
-                    <Box sx={{ ml: 1 }}>
-                      <Typography className={classes.subtitle}>
-                        Maria Fernanda
+                  <Accordion className="perfil" expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1bh-content"
+                      id="panel1bh-header"
+                    >
+                      <Avatar alt="Remy Sharp" src="/avatar.png" />
+                      <div className="usuario">
+                        <Typography className={classes.subtitle}>
+                          Maria Fernanda
+                        </Typography>
+                        <Typography className={classes.body}>
+                          mariafernanda@gmail.com
+                        </Typography>
+                      </div>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography>
+                        Você tem 05/25 créditos.
                       </Typography>
-                      <Typography className={classes.body}>
-                        mariafernanda@gmail.com
-                      </Typography>
-                    </Box>
-                  </Box>
+                    </AccordionDetails>
+                  </Accordion> 
+
                   <Divider />
+
                   <Typography className={classes.title}>
                     Minhas fotos
                   </Typography>
-                  {imagens.map((item) => (
-                    <Stack direction="row" justifyContent="space-between">
-                      <img
-                        alt="Original photo of a room"
-                        src={item.image}
-                        className="w-full object-cover h-40 rounded-2xl"
-                        style={{
-                          width: "50%",
+                  
+                  <div className="historico">
+                    {imagens.map((item) => (
+                      <Stack direction="row">
+                        <img
+                          alt="Original photo of a room"
+                          src={item.image}
+                          className="w-full object-cover h-40 rounded-2xl"
+                          style={{
+                            width: "45%",
 
-                          height: "auto",
-                          padding: 0,
-                          margin: 0,
-                          borderRadius: 5,
-                        }}
-                        loading="lazy"
-                      />
-                      <Stack direction="column" spacing={1}>
-                        <Typography className={classes.subtitle}>
-                          Tema: <span>Aventura na selva</span>
-                        </Typography>
-                        <Typography className={classes.body}>
-                          Dia: 03/04/23 às 13:45
-                        </Typography>
-                        <Button
-                          color="primary"
-                          size="large"
-                          variant="contained"
-                        >
-                          Download
-                        </Button>
+                            height: "auto",
+                            padding: 0,
+                            marginBottom: 10,
+                            borderRadius: 5,
+                          }}
+                          loading="lazy"
+                        />
+                        <Stack spacing={1}>
+                          <Typography className={classes.subtitle}>
+                            Tema: <span>Aventura na selva</span>
+                          </Typography>
+                          <Typography className={classes.body}>
+                            Dia: 03/04/23 às 13:45
+                          </Typography>
+                          <Button
+                            color="primary"
+                            variant="contained"
+                          >
+                            Download
+                          </Button>
+                        </Stack>
                       </Stack>
-                    </Stack>
-                  ))}
+                    ))}
+                  </div>
+
                 </Stack>
               </Paper>
             </Grid2>
             <Grid2 xs={6} md={8}>
               <Stack direction="column" spacing={2}>
                 <Typography className={classes.title}>
-                  1 Faça o upload da sua foto
+                1º - Faça o upload da sua foto
                 </Typography>
                 <Paper
                   elevation={0}
@@ -178,7 +213,7 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                   </Box>
                 </Paper>
                 <Typography className={classes.title}>
-                  2 Escolha seu tema preferido
+                  2º - Escolha seu tema preferido
                 </Typography>
                 <Grid2
                   container
@@ -207,8 +242,11 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                     </Grid2>
                   ))}
                 </Grid2>
-                <Button color="primary" size="large" variant="contained">
-                  Gerar imagem
+                <Button 
+                  color="primary" 
+                  variant="contained"
+                  >
+                  <span>Gerar imagem</span>  
                 </Button>
               </Stack>
             </Grid2>

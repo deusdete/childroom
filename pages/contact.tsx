@@ -23,7 +23,7 @@ const plans = [
   },
 ];
 
-const Plans: NextPage = () => {
+const Contact: NextPage = () => {
   return (
     <>
       <Header />
@@ -130,4 +130,4 @@ const Plans: NextPage = () => {
   );
 };
 
-export default Plans;
+export default Contact;

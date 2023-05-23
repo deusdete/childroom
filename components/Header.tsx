@@ -40,7 +40,7 @@ const useStyles = makeStyles({
 });
 
 const navLinks = [
-  { title: "Sobre", path: "/" },
+  { title: "Home", path: "/" },
   { title: "Planos", path: "/plans" },
   { title: "Contato", path: "/contact" },
 ];
