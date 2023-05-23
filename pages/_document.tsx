@@ -20,8 +20,14 @@ class MyDocument extends Document {
           <meta name="twitter:description" content={description} />
           <meta property="og:image" content={ogimage} />
           <meta name="twitter:image" content={ogimage} />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;900&display=swap"
+            rel="stylesheet"
+          />
         </Head>
-        <body className="bg-[#17181C] text-white">
+        <body>
           <Main />
           <NextScript />
         </body>
