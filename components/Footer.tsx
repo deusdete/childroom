@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import {
   AppBar,
   Box,
+  Grid,
   Button,
   Stack,
   Link,
@@ -45,13 +46,14 @@ const navLinks = [
   { title: "Política de privacidade", path: "/" },
   { title: "Fale conosco", path: "/" },
 ];
-const Header: FC<HeaderProps> = (props) => {
+const Footer: FC<HeaderProps> = (props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const classes = useStyles();
 
   return (
+
     <footer>
       <Box sx={{ backgroundColor: "#803DA9" }}>
         <Toolbar sx={{ height: 100 }}>
@@ -63,9 +65,9 @@ const Header: FC<HeaderProps> = (props) => {
               spacing={2}
             >
               <NextLink href={`"/"`} style={{ margin: 0 }}>
-                {isMobile ? <Logo src="/RoomChild_2.png" width={60} height={20} /> : <Logo src="/RoomChild_2.png" />}
+                {isMobile ? <Logo src="/RoomChild_2.png" width={60} height={16} /> : <Logo src="/RoomChild_2.png" />}
               </NextLink>
-              <Box>
+              <Box className="menu-footer">
                 <List
                   component="nav"
                   aria-labelledby="main navigation"
@@ -124,7 +126,8 @@ const Header: FC<HeaderProps> = (props) => {
         </Toolbar>
       </Box>
     </footer>
+    
   );
 };
 
-export default Header;
+export default Footer;

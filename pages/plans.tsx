@@ -1,6 +1,9 @@
 import { NextPage } from "next";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+
+import Grid from '@mui/material/Unstable_Grid2';
+
 import {
   Box,
   Button,
@@ -31,8 +34,8 @@ const Plans: NextPage = () => {
         sx={{
           backgroundColor: "#F0F3FC",
           justifyContent: "center",
-          minHeight:  "100vh",
-          py: 10,
+          minHeight:  "80vh",
+          paddingTop: 10,
         }}
       >
         <Container maxWidth="lg">
@@ -43,10 +46,10 @@ const Plans: NextPage = () => {
               Planos
             </Typography>
           </Box>
-          <Stack direction="row" justifyContent="center" spacing={5}>
+
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             {plans.map((plan) => (
-              <Paper
-                elevation={0}
+              <Grid xs={12} md={6}
                 sx={{
                   backgroundColor: "#fff",
                   borderRadius: 5,
@@ -120,9 +123,9 @@ const Plans: NextPage = () => {
                     Começar
                   </Button>
                 </Stack>
-              </Paper>
+              </Grid>
             ))}
-          </Stack>
+          </Grid>
         </Container>
       </Box>
       <Footer />

@@ -55,6 +55,10 @@ body {
   margin-top: 0em;
 }
 
+.perfil{
+  box-shadow: none;
+}
+
 .perfil > div{
   padding: 0;
 }
@@ -98,4 +102,12 @@ body {
 .box-login button.facebook{
   color: #fff;
   background-color: rgb(31, 31, 146);
+}
+
+.menu-footer nav{
+  display: flex;
+}
+
+.rodape{
+  background-color: aqua;
 }

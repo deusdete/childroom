@@ -116,7 +116,7 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                 }}
               >
                 <Stack direction="column" spacing={2} sx={{ p: 2 }}>
-                  <Typography className={classes.title}>Meu perfil</Typography>
+                  <Typography variant="h1" className={classes.title}>Meu perfil</Typography>
                   <Accordion className="perfil" expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
@@ -242,12 +242,15 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                     </Grid2>
                   ))}
                 </Grid2>
-                <Button 
-                  color="primary" 
-                  variant="contained"
-                  >
-                  <span>Gerar imagem</span>  
-                </Button>
+                <Box>
+                  <Button 
+                    color="primary" 
+                    variant="contained"
+                    size="large"
+                    >
+                    <span>GERAR IMAGEM</span>  
+                  </Button>
+                </Box>
               </Stack>
             </Grid2>
           </Grid2>

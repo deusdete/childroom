@@ -28,7 +28,7 @@ const Login: NextPage = () => {
           justifyContent: "center",
           alignItens: "center",
           minHeight:  "100vh",
-          py: 10,
+          padding: 0,
         }}
       >
         <Container className="tela-login" maxWidth="lg">
@@ -88,7 +88,7 @@ const Login: NextPage = () => {
                 </Box>
                 <Box
                   sx={{
-                    width: 100,
+                    width: 500,
                     maxWidth: '100%',
                   }}
                 >
