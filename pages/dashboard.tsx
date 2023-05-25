@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Header from "../components/Header";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Footer from "../components/Footer";
@@ -8,46 +8,259 @@ import { Room } from "@prisma/client";
 import { RoomGeneration } from "../components/RoomGenerator";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
+import HeaderDashboard from "../components/HeaderDashboard";
+
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+import {
+  Avatar,
+  Box,
+  Stack,
+  Container,
+  Divider,
+  Typography,
+  Button,
+  Paper,
+  Grid,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  title: {
+    fontSize: "1rem",
+    fontWeight: 700,
+    color: "#3B2173",
+  },
+  subtitle: {
+    fontSize: "0.8rem",
+    fontWeight: 400,
+    color: "#000",
+  },
+  body: {
+    fontSize: "0.7rem",
+    fontWeight: 400,
+    color: "#858585",
+  },
+  linkText: {
+    textDecoration: "none",
+    fontSize: "0.8rem",
+    fontWeight: 700,
+    color: "#3B2173",
+  },
+  buttonLink: {},
+});
+
+const imagens = [
+  {
+    name: "Room1",
+    image: "/room-01.jpg",
+  },
+  {
+    name: "Room2",
+    image: "/room-02.jpg",
+  },
+  {
+    name: "Room3",
+    image: "/room-03.jpg",
+  },
+  {
+    name: "Room4",
+    image: "/room-04.jpg",
+  },
+  {
+    name: "Room5",
+    image: "/room-05.jpg",
+  },
+  {
+    name: "Room6",
+    image: "/room-06.jpg",
+  },
+];
 
 export default function Dashboard({ rooms }: { rooms: Room[] }) {
   const { data: session } = useSession();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [expanded, setExpanded] = useState<string | false>(false);
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
+  const classes = useStyles();
+
+  const [loading, setLoading] = useState(true);
+  function handleClick() {
+    setLoading(true);
+  }
 
   return (
     <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <Head>
         <title>RoomGPT Dashboard</title>
       </Head>
-      <Header
-        photo={session?.user?.image || undefined}
-        email={session?.user?.email || undefined}
-      />
-      <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mb-0 mb-8">
-        <h1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
-          View your <span className="text-blue-600">room</span> generations
-        </h1>
-        {rooms.length === 0 ? (
-          <p className="text-gray-300">
-            You have no room generations. Generate one{" "}
-            <Link
-              href="/dream"
-              className="text-blue-600 underline underline-offset-2"
-            >
-              here
-            </Link>
-          </p>
-        ) : (
-          <p className="text-gray-300">
-            Browse through your previous room generations below. Any feedback?
-            Email hassan@roomgpt.io
-          </p>
-        )}
-        {rooms.map((room) => (
-          <RoomGeneration
-            original={room.inputImage}
-            generated={room.outputImage}
-          />
-        ))}
-      </main>
+      <HeaderDashboard />
+      <Box sx={{ backgroundColor: "#F0F3FC" }}>
+        <Container maxWidth="lg" sx={{ py: 5 }}>
+          <Grid
+            container
+            spacing={2}
+            direction={isMobile ? "column-reverse" : "row"}
+          >
+            <Grid item xs={12} md={4}>
+              <Paper
+                elevation={0}
+                sx={{
+                  backgroundColor: "#fff",
+                  borderRadius: 5,
+                  width: "100%",
+                }}
+              >
+                <Stack direction="column" spacing={2} sx={{ p: 2 }}>
+                  <Typography variant="h1" className={classes.title}>
+                    Meu perfil
+                  </Typography>
+                  <Accordion
+                    className="perfil"
+                    expanded={expanded === "panel1"}
+                    onChange={handleChange("panel1")}
+                  >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1bh-content"
+                      id="panel1bh-header"
+                    >
+                      <Avatar alt="Remy Sharp" src="/avatar.png" />
+                      <div className="usuario">
+                        <Typography className={classes.subtitle}>
+                          Maria Fernanda
+                        </Typography>
+                        <Typography className={classes.body}>
+                          mariafernanda@gmail.com
+                        </Typography>
+                      </div>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography>Você tem 05/25 créditos.</Typography>
+                    </AccordionDetails>
+                  </Accordion>
+
+                  <Divider />
+
+                  <Typography className={classes.title}>
+                    Minhas fotos
+                  </Typography>
+
+                  <div className="historico">
+                    {imagens.map((item) => (
+                      <Stack direction="row">
+                        <img
+                          alt="Original photo of a room"
+                          src={item.image}
+                          className="w-full object-cover h-40 rounded-2xl"
+                          style={{
+                            width: "45%",
+
+                            height: "auto",
+                            padding: 0,
+                            marginBottom: 10,
+                            borderRadius: 5,
+                          }}
+                          loading="lazy"
+                        />
+                        <Stack spacing={1}>
+                          <Typography className={classes.subtitle}>
+                            Tema: <span>Aventura na selva</span>
+                          </Typography>
+                          <Typography className={classes.body}>
+                            Dia: 03/04/23 às 13:45
+                          </Typography>
+                          <Button color="primary" variant="contained">
+                            Download
+                          </Button>
+                        </Stack>
+                      </Stack>
+                    ))}
+                  </div>
+                </Stack>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <Stack direction="column" spacing={2}>
+                <Typography className={classes.title}>
+                  1º - Faça o upload da sua foto
+                </Typography>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    backgroundColor: "#fff",
+                    borderRadius: 5,
+                    width: "100%",
+                    height: 200,
+                  }}
+                >
+                  <Box>
+                    <Stack direction="column" spacing={2} alignItems={"center"}>
+                      <Typography className={classes.body}>
+                        Arraste sua foto aqui
+                      </Typography>
+                      <Typography className={classes.linkText}>
+                        ou clique aqui para importar
+                      </Typography>
+                    </Stack>
+                  </Box>
+                </Paper>
+                <Typography className={classes.title}>
+                  2º - Escolha seu tema preferido
+                </Typography>
+                <Grid
+                  container
+                  rowSpacing={1}
+                  columnSpacing={1}
+                  columns={{ xs: 4, sm: 8, md: 12 }}
+                  sx={{ textAlign: "center", mt: 5 }}
+                >
+                  {imagens.map((item, index) => (
+                    <Grid item xs={2} sm={4} md={4} key={index}>
+                      <Button variant="text" sx={{ padding: 0, margin: 0 }}>
+                        <img
+                          alt="Original photo of a room"
+                          src={item.image}
+                          style={{
+                            display: "flex",
+                            width: "100%",
+                            maxWidth: "auto",
+                            height: "auto",
+                            padding: 0,
+                            margin: 0,
+                            borderRadius: 20,
+                          }}
+                          loading="lazy"
+                        />
+                      </Button>
+                    </Grid>
+                  ))}
+                </Grid>
+                <Box>
+                  <Button color="primary" variant="contained" size="large">
+                    <span>GERAR IMAGEM</span>
+                  </Button>
+                </Box>
+              </Stack>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
       <Footer />
     </div>
   );

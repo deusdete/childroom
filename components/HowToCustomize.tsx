@@ -1,3 +1,6 @@
+import { Box, Chip, Container, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+
+
 const features = [
   {
     name: "1º passo",
@@ -15,29 +18,33 @@ const features = [
 ];
 
 export default function HowToCustomize() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <div className="bg-white py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+    <Box sx={{ backgroundColor: "#fff", py: 10 }}>
+      <Container maxWidth="lg">
+        <Box sx={{ textAlign: "center", mb: 2 }}>
+          <Typography
+            sx={{ fontWeight: 700, fontSize: "2rem", color: "#3B2173" }}
+          >
             Como personalizar meu quarto?
-          </p>
-        </div>
-        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-          <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-3 lg:gap-y-16">
-            {features.map((feature) => (
-              <div key={feature.name} className="relative pl-16">
-                <dt className="text-base font-semibold leading-7 text-gray-900">
-                  {feature.name}
-                </dt>
-                <dd className="mt-2 text-base leading-7 text-gray-600">
-                  {feature.description}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </div>
-    </div>
+          </Typography>
+        </Box>
+        <Stack direction={isMobile ? "column" : "row"} justifyContent="space-between">
+          {features.map((feature) => (
+            <Box sx={{ p: 5 }}>
+              <Chip
+                label={feature.name}
+                sx={{ backgroundColor: "#FFD300", fontWeight: 700, mb: 2 }}
+              />
+              <Typography sx={{ fontSize: "1rem", fontWeight: 4000 }}>
+                {feature.description}
+              </Typography>
+            </Box>
+          ))}
+        </Stack>
+      </Container>
+    </Box>
   );
 }
