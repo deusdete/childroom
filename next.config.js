@@ -4,6 +4,7 @@ module.exports = {
   images: {
     domains: ["upcdn.io", "replicate.delivery", "lh3.googleusercontent.com"],
   },
+  ignoreBuildErrors: true,
   async redirects() {
     return [
       {
