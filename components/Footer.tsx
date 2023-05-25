@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import {
   AppBar,
   Box,
+  Grid,
   Button,
   Stack,
   Link,
@@ -45,7 +46,7 @@ const navLinks = [
   { title: "Política de privacidade", path: "/" },
   { title: "Fale conosco", path: "/" },
 ];
-const Header: FC<HeaderProps> = (props) => {
+const Footer: FC<HeaderProps> = (props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -54,18 +55,23 @@ const Header: FC<HeaderProps> = (props) => {
   return (
     <footer>
       <Box sx={{ backgroundColor: "#803DA9" }}>
-        <Toolbar sx={{ height: 100 }}>
+        <Toolbar sx={{ minHeight: 100 }}>
           <Container maxWidth="lg">
             <Stack
-              direction="row"
-              justifyContent={{ sm: "space-between" }}
+              direction={isMobile ? "column" : "row"}
+              justifyContent={{ xs: "center", sm: "space-between" }}
               alignItems={"center"}
               spacing={2}
+              sx={{py: isMobile ? 5 : 2}}
             >
               <NextLink href={`"/"`} style={{ margin: 0 }}>
-                {isMobile ? <Logo src="/RoomChild_2.png" width={60} height={20} /> : <Logo src="/RoomChild_2.png" />}
+                {isMobile ? (
+                  <Logo src="/RoomChild_2.png" width={60} height={16} />
+                ) : (
+                  <Logo src="/RoomChild_2.png" />
+                )}
               </NextLink>
-              <Box>
+              <Box className="menu-footer">
                 <List
                   component="nav"
                   aria-labelledby="main navigation"
@@ -94,7 +100,7 @@ const Header: FC<HeaderProps> = (props) => {
                 </List>
               </Box>
               <Stack
-                sx={{ display: { xs: "none", sm: "flex" } }}
+                sx={{ display: "flex" }}
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center"
@@ -105,7 +111,7 @@ const Header: FC<HeaderProps> = (props) => {
                   component="button"
                   underline="none"
                   variant="body1"
-                  sx={{color: '#fff'}}
+                  sx={{ color: "#fff" }}
                 >
                   <InstagramIcon />
                 </Link>
@@ -114,7 +120,7 @@ const Header: FC<HeaderProps> = (props) => {
                   component="button"
                   underline="none"
                   variant="body1"
-                  sx={{color: '#fff'}}
+                  sx={{ color: "#fff" }}
                 >
                   <FacebookIcon />
                 </Link>
@@ -127,4 +133,4 @@ const Header: FC<HeaderProps> = (props) => {
   );
 };
 
-export default Header;
+export default Footer;

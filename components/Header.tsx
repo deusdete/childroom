@@ -116,6 +116,7 @@ const Header: FC<HeaderProps> = (props) => {
                 component="button"
                 underline="none"
                 variant="body1"
+                href="login"
                 sx={{ fontSize: isMobile ? "0.8rem" : "1rem", fontWeight: 400 }}
               >
                 Login

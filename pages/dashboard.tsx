@@ -1,5 +1,5 @@
 import Head from "next/head";
-import * as React from 'react';
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Footer from "../components/Footer";
@@ -9,12 +9,11 @@ import { RoomGeneration } from "../components/RoomGenerator";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import HeaderDashboard from "../components/HeaderDashboard";
-import Grid2 from "@mui/material/Unstable_Grid2";
 
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import {
   Avatar,
@@ -25,6 +24,9 @@ import {
   Typography,
   Button,
   Paper,
+  Grid,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
@@ -83,16 +85,18 @@ const imagens = [
 export default function Dashboard({ rooms }: { rooms: Room[] }) {
   const { data: session } = useSession();
 
-  const [expanded, setExpanded] = React.useState<string | false>(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [expanded, setExpanded] = useState<string | false>(false);
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
     };
 
-
   const classes = useStyles();
-  
-  const [loading, setLoading] = React.useState(true);
+
+  const [loading, setLoading] = useState(true);
   function handleClick() {
     setLoading(true);
   }
@@ -104,9 +108,13 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
       </Head>
       <HeaderDashboard />
       <Box sx={{ backgroundColor: "#F0F3FC" }}>
-        <Container maxWidth="lg" sx={{py: 5}}>
-          <Grid2 container spacing={2}>
-            <Grid2 xs={6} md={4}>
+        <Container maxWidth="lg" sx={{ py: 5 }}>
+          <Grid
+            container
+            spacing={2}
+            direction={isMobile ? "column-reverse" : "row"}
+          >
+            <Grid item xs={12} md={4}>
               <Paper
                 elevation={0}
                 sx={{
@@ -116,8 +124,14 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                 }}
               >
                 <Stack direction="column" spacing={2} sx={{ p: 2 }}>
-                  <Typography className={classes.title}>Meu perfil</Typography>
-                  <Accordion className="perfil" expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                  <Typography variant="h1" className={classes.title}>
+                    Meu perfil
+                  </Typography>
+                  <Accordion
+                    className="perfil"
+                    expanded={expanded === "panel1"}
+                    onChange={handleChange("panel1")}
+                  >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1bh-content"
@@ -134,18 +148,16 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                       </div>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Typography>
-                        Você tem 05/25 créditos.
-                      </Typography>
+                      <Typography>Você tem 05/25 créditos.</Typography>
                     </AccordionDetails>
-                  </Accordion> 
+                  </Accordion>
 
                   <Divider />
 
                   <Typography className={classes.title}>
                     Minhas fotos
                   </Typography>
-                  
+
                   <div className="historico">
                     {imagens.map((item) => (
                       <Stack direction="row">
@@ -170,24 +182,20 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                           <Typography className={classes.body}>
                             Dia: 03/04/23 às 13:45
                           </Typography>
-                          <Button
-                            color="primary"
-                            variant="contained"
-                          >
+                          <Button color="primary" variant="contained">
                             Download
                           </Button>
                         </Stack>
                       </Stack>
                     ))}
                   </div>
-
                 </Stack>
               </Paper>
-            </Grid2>
-            <Grid2 xs={6} md={8}>
+            </Grid>
+            <Grid item xs={12} md={8}>
               <Stack direction="column" spacing={2}>
                 <Typography className={classes.title}>
-                1º - Faça o upload da sua foto
+                  1º - Faça o upload da sua foto
                 </Typography>
                 <Paper
                   elevation={0}
@@ -215,7 +223,7 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                 <Typography className={classes.title}>
                   2º - Escolha seu tema preferido
                 </Typography>
-                <Grid2
+                <Grid
                   container
                   rowSpacing={1}
                   columnSpacing={1}
@@ -223,34 +231,34 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                   sx={{ textAlign: "center", mt: 5 }}
                 >
                   {imagens.map((item, index) => (
-                    <Grid2 xs={2} sm={4} md={4} key={index}>
+                    <Grid item xs={2} sm={4} md={4} key={index}>
                       <Button variant="text" sx={{ padding: 0, margin: 0 }}>
                         <img
                           alt="Original photo of a room"
                           src={item.image}
-                          className="w-full object-cover h-40 rounded-2xl"
                           style={{
+                            display: "flex",
                             width: "100%",
-                            maxWidth: 300,
+                            maxWidth: "auto",
                             height: "auto",
-
+                            padding: 0,
+                            margin: 0,
                             borderRadius: 20,
                           }}
                           loading="lazy"
                         />
                       </Button>
-                    </Grid2>
+                    </Grid>
                   ))}
-                </Grid2>
-                <Button 
-                  color="primary" 
-                  variant="contained"
-                  >
-                  <span>Gerar imagem</span>  
-                </Button>
+                </Grid>
+                <Box>
+                  <Button color="primary" variant="contained" size="large">
+                    <span>GERAR IMAGEM</span>
+                  </Button>
+                </Box>
               </Stack>
-            </Grid2>
-          </Grid2>
+            </Grid>
+          </Grid>
         </Container>
       </Box>
       <Footer />

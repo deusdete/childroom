@@ -1,4 +1,5 @@
-import { Box, Chip, Container, Stack, Typography } from "@mui/material";
+import { Box, Chip, Container, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+
 
 const features = [
   {
@@ -17,6 +18,9 @@ const features = [
 ];
 
 export default function HowToCustomize() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Box sx={{ backgroundColor: "#fff", py: 10 }}>
       <Container maxWidth="lg">
@@ -27,7 +31,7 @@ export default function HowToCustomize() {
             Como personalizar meu quarto?
           </Typography>
         </Box>
-        <Stack direction="row" justifyContent="space-between">
+        <Stack direction={isMobile ? "column" : "row"} justifyContent="space-between">
           {features.map((feature) => (
             <Box sx={{ p: 5 }}>
               <Chip

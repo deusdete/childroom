@@ -55,10 +55,59 @@ body {
   margin-top: 0em;
 }
 
+.perfil{
+  box-shadow: none;
+}
+
 .perfil > div{
   padding: 0;
 }
 
 .perfil .usuario{
   margin-left: .7em;
+}
+
+.tela-login{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.box-login{
+  background-color: #fff;
+  border-radius: 1em;
+  width: 40%;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.box-login button{
+  width: 100%;
+}
+
+.box-login p{
+  margin-bottom: 1em;
+}
+
+.box-login button.google{
+  color: #939393;
+  background-color: aliceblue;
+}
+
+.box-login button.facebook{
+  color: #fff;
+  background-color: rgb(31, 31, 146);
+}
+
+.menu-footer nav{
+  display: flex;
+}
+
+.rodape{
+  background-color: aqua;
 }
