@@ -3,11 +3,8 @@ import {
   Stack,
   Container,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import { useTheme } from "@mui/material/styles";
-import Image from "next/image";
 
 const rommThemes = [
   {
@@ -37,8 +34,6 @@ const rommThemes = [
 ];
 
 export default function HeroThemaRoom() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Box sx={{ backgroundColor: "#F0F3FC", pb: 5 }}>
       <Container maxWidth="lg">
@@ -49,7 +44,7 @@ export default function HeroThemaRoom() {
             columnSpacing={{ xs: 1, sm: 2, md: 5 }}
             sx={{ position: "relative", top: -100, textAlign: "center" }}
           >
-            <Grid2 xs={6}>
+            <Grid2 xs={12} md={6}>
               <img
                 src={"/quarto-01.jpg"}
                 style={{
@@ -63,7 +58,7 @@ export default function HeroThemaRoom() {
                 loading="lazy"
               />
             </Grid2>
-            <Grid2 xs={6}>
+            <Grid2 xs={12} md={6}>
               <img
                 src={"/quarto-02.jpg"}
                 style={{
@@ -93,28 +88,28 @@ export default function HeroThemaRoom() {
         </Box>
         <Grid2
           container
-          rowSpacing={1}
-          columnSpacing={1}
+          rowSpacing={2}
+          columnSpacing={2}
           columns={{ xs: 4, sm: 8, md: 12 }}
           sx={{ textAlign: "center", mt: 5 }}
         >
           {rommThemes.map((item, index) => (
             <Grid2 xs={2} sm={4} md={4} key={index}>
-                <img
-                  alt="Original photo of a room"
-                  src={item.image}
-                  className="w-full object-cover h-40 rounded-2xl"
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    maxWidth: "auto",
-                    height: "auto",
-                    padding: 0,
-                    margin: 0,
-                    borderRadius: 20,
-                  }}
-                  loading="lazy"
-                />
+              <img
+                alt="Original photo of a room"
+                src={item.image}
+                className="w-full object-cover h-40 rounded-2xl"
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  maxWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  margin: 0,
+                  borderRadius: 20,
+                }}
+                loading="lazy"
+              />
             </Grid2>
           ))}
         </Grid2>

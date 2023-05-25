@@ -53,19 +53,23 @@ const Footer: FC<HeaderProps> = (props) => {
   const classes = useStyles();
 
   return (
-
     <footer>
       <Box sx={{ backgroundColor: "#803DA9" }}>
-        <Toolbar sx={{ height: 100 }}>
+        <Toolbar sx={{ minHeight: 100 }}>
           <Container maxWidth="lg">
             <Stack
-              direction="row"
-              justifyContent={{ sm: "space-between" }}
+              direction={isMobile ? "column" : "row"}
+              justifyContent={{ xs: "center", sm: "space-between" }}
               alignItems={"center"}
               spacing={2}
+              sx={{py: isMobile ? 5 : 2}}
             >
               <NextLink href={`"/"`} style={{ margin: 0 }}>
-                {isMobile ? <Logo src="/RoomChild_2.png" width={60} height={16} /> : <Logo src="/RoomChild_2.png" />}
+                {isMobile ? (
+                  <Logo src="/RoomChild_2.png" width={60} height={16} />
+                ) : (
+                  <Logo src="/RoomChild_2.png" />
+                )}
               </NextLink>
               <Box className="menu-footer">
                 <List
@@ -96,7 +100,7 @@ const Footer: FC<HeaderProps> = (props) => {
                 </List>
               </Box>
               <Stack
-                sx={{ display: { xs: "none", sm: "flex" } }}
+                sx={{ display: "flex" }}
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center"
@@ -107,7 +111,7 @@ const Footer: FC<HeaderProps> = (props) => {
                   component="button"
                   underline="none"
                   variant="body1"
-                  sx={{color: '#fff'}}
+                  sx={{ color: "#fff" }}
                 >
                   <InstagramIcon />
                 </Link>
@@ -116,7 +120,7 @@ const Footer: FC<HeaderProps> = (props) => {
                   component="button"
                   underline="none"
                   variant="body1"
-                  sx={{color: '#fff'}}
+                  sx={{ color: "#fff" }}
                 >
                   <FacebookIcon />
                 </Link>
@@ -126,7 +130,6 @@ const Footer: FC<HeaderProps> = (props) => {
         </Toolbar>
       </Box>
     </footer>
-    
   );
 };
 

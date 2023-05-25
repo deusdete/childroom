@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from "@mui/material/Unstable_Grid2";
 
 import {
   Box,
@@ -11,7 +11,25 @@ import {
   Paper,
   Stack,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  priceText: {
+    color: "#3B2173",
+    fontWeight: 700,
+    fontSize: "0.8rem",
+  },
+  price: {
+    color: "#3B2173",
+    fontWeight: 700,
+    fontSize: "1.5em",
+    marginLeft: 5,
+    marginRight: 5,
+  },
+});
 
 const plans = [
   {
@@ -27,6 +45,11 @@ const plans = [
 ];
 
 const Plans: NextPage = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const classes = useStyles();
+
   return (
     <>
       <Header />
@@ -34,8 +57,9 @@ const Plans: NextPage = () => {
         sx={{
           backgroundColor: "#F0F3FC",
           justifyContent: "center",
-          minHeight:  "80vh",
+          minHeight: "80vh",
           paddingTop: 10,
+          paddingBottom: 10
         }}
       >
         <Container maxWidth="lg">
@@ -47,9 +71,14 @@ const Plans: NextPage = () => {
             </Typography>
           </Box>
 
-          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Stack
+            direction={isMobile ? "column" : "row"}
+            justifyContent="center"
+            spacing={5}
+          >
             {plans.map((plan) => (
-              <Grid xs={12} md={6}
+              <Paper
+                elevation={0}
                 sx={{
                   backgroundColor: "#fff",
                   borderRadius: 5,
@@ -73,35 +102,18 @@ const Plans: NextPage = () => {
                   >
                     {plan.title}
                   </Typography>
-                  <Box sx={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
-                    <Typography
-                      sx={{
-                        color: "#3B2173",
-                        fontWeight: 700,
-                        fontSize: "0.8rem",
-                      }}
-                    >
-                      R$
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#3B2173",
-                        fontWeight: 700,
-                        fontSize: "1.5em",
-                        px: 1
-                      }}
-                    >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography className={classes.priceText}>R$</Typography>
+                    <Typography className={classes.price}>
                       {plan.price}
                     </Typography>
-                    <Typography
-                      sx={{
-                        color: "#3B2173",
-                        fontWeight: 700,
-                        fontSize: "0.8rem",
-                      }}
-                    >
-                      /mês
-                    </Typography>
+                    <Typography className={classes.priceText}>/mês</Typography>
                   </Box>
                   <Typography
                     sx={{
@@ -110,7 +122,7 @@ const Plans: NextPage = () => {
                       fontSize: "0.8rem",
                     }}
                   >
-                    R$
+                    {plan.description}
                   </Typography>
                   <Button
                     color="primary"
@@ -123,9 +135,9 @@ const Plans: NextPage = () => {
                     Começar
                   </Button>
                 </Stack>
-              </Grid>
+              </Paper>
             ))}
-          </Grid>
+          </Stack>
         </Container>
       </Box>
       <Footer />
