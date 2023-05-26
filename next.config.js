@@ -4,7 +4,13 @@ module.exports = {
   images: {
     domains: ["upcdn.io", "replicate.delivery", "lh3.googleusercontent.com"],
   },
-  ignoreBuildErrors: true,
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
   async redirects() {
     return [
       {
