@@ -68,9 +68,9 @@ const Plans: NextPage = () => {
         sx={{
           backgroundColor: "#F0F3FC",
           justifyContent: "center",
-          minHeight: "80vh",
+
           paddingTop: 10,
-          paddingBottom: 10,
+          paddingBottom: 5
         }}
       >
         <Container maxWidth="lg">

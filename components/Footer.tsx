@@ -42,9 +42,9 @@ const useStyles = makeStyles({
 });
 
 const navLinks = [
-  { title: "Termos e condições", path: "/" },
-  { title: "Política de privacidade", path: "/" },
-  { title: "Fale conosco", path: "/" },
+  { title: "Termos e condições", path: "/termos-e-condicoes" },
+  { title: "Política de privacidade", path: "/politica-de-privacidade" },
+  { title: "Fale conosco", path: "/fale-conosco" },
 ];
 const Footer: FC<HeaderProps> = (props) => {
   const theme = useTheme();
@@ -66,7 +66,7 @@ const Footer: FC<HeaderProps> = (props) => {
             >
               <NextLink href={`"/"`} style={{ margin: 0 }}>
                 {isMobile ? (
-                  <Logo src="/RoomChild_2.png" width={60} height={16} />
+                  <Logo src="/RoomChild_2.png" />
                 ) : (
                   <Logo src="/RoomChild_2.png" />
                 )}

@@ -44,7 +44,6 @@ const useStyles = makeStyles({
 const navLinks = [
   { title: "Home", path: "/" },
   { title: "Planos", path: "/plans" },
-  { title: "Contato", path: "/contact" },
 ];
 
 const Header: FC<HeaderProps> = (props) => {
@@ -114,6 +113,7 @@ const Header: FC<HeaderProps> = (props) => {
               alignItems="center"
               spacing={2}
             >
+              
               <Link
                 color="textPrimary"
                 underline="none"
