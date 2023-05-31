@@ -1,11 +1,13 @@
 import Head from "next/head";
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Footer from "../components/Footer";
 import prisma from "../lib/prismadb";
+import useSWR from "swr";
 import { Room } from "@prisma/client";
-import { RoomGeneration } from "../components/RoomGenerator";
+import { useRouter } from "next/router";
+import { Toaster, toast } from "react-hot-toast";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import HeaderDashboard from "../components/HeaderDashboard";
@@ -29,6 +31,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import AuthContext from "../contexts/AuthContext";
+import { GenerateResponseData } from "./api/generate";
+import { UploadDropzone } from "react-uploader";
+import { roomType, rooms, themeType, themes } from "../utils/dropdownTypes";
+import { UploadWidgetResult, Uploader } from "uploader";
 
 const useStyles = makeStyles({
   title: {
@@ -82,13 +89,18 @@ const imagens = [
   },
 ];
 
+const uploader = Uploader({
+  apiKey: !!process.env.NEXT_PUBLIC_UPLOAD_API_KEY
+    ? process.env.NEXT_PUBLIC_UPLOAD_API_KEY
+    : "free",
+});
+
 export default function Dashboard({ rooms }: { rooms: Room[] }) {
-  const { data: session } = useSession();
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const themeMui = useTheme();
+  const isMobile = useMediaQuery(themeMui.breakpoints.down("sm"));
+  const { user } = useContext(AuthContext);
   const [expanded, setExpanded] = useState<string | false>(false);
+
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
@@ -96,10 +108,109 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
 
   const classes = useStyles();
 
-  const [loading, setLoading] = useState(true);
-  function handleClick() {
-    setLoading(true);
+  const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
+  const [originalFile, setOriginalFile] = useState<UploadWidgetResult | null>(
+    null
+  );
+  const [restoredImage, setRestoredImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [restoredLoaded, setRestoredLoaded] = useState<boolean>(false);
+  const [sideBySide, setSideBySide] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [photoName, setPhotoName] = useState<string | null>(null);
+  const [theme, setTheme] = useState<themeType>("Modern");
+  const [room, setRoom] = useState<roomType>("Living Room");
+
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const { data, mutate } = useSWR("/api/remaining", fetcher);
+  const { data: session, status } = useSession();
+
+  const options = {
+    layout: "modal",
+    maxFileCount: 1,
+    mimeTypes: ["image/jpeg", "image/png", "image/jpg"],
+    editor: { images: { crop: false } },
+    tags: [data?.remainingGenerations > 3 ? "paid" : "free"],
+    styles: {
+      colors: {
+        primary: "#2563EB", // Primary buttons & links
+        error: "#d23f4d", // Error messages
+        shade100: "#fff", // Standard text
+        shade200: "#fffe", // Secondary button text
+        shade300: "#fffd", // Secondary button text (hover)
+        shade400: "#fffc", // Welcome text
+        shade500: "#fff9", // Modal close button
+        shade600: "#fff7", // Border
+        shade700: "#fff2", // Progress indicator background
+        shade800: "#fff1", // File item background
+        shade900: "#ffff", // Various (draggable crop buttons, etc.)
+      },
+    },
+    onValidate: async (file: File): Promise<undefined | string> => {
+      return data.remainingGenerations === 0
+        ? `Não há mais créditos restantes. Compre mais em planos.`
+        : undefined;
+    },
+  };
+
+  function uploadImage() {
+    uploader
+      .open({
+        maxFileCount: 1,
+        mimeTypes: ["image/jpeg", "image/png", "image/webp"],
+        editor: {
+          images: {
+            cropShape: "circ", // "rect" also supported.
+            cropRatio: 1 / 1, // "1" is enforced for "circ".
+          },
+        },
+      })
+      .then(
+        (files) => {
+          if (files.length !== 0) {
+            setPhotoName(files[0].originalFile.originalFileName);
+            setOriginalPhoto(files[0].fileUrl.replace("raw", "thumbnail"));
+            setOriginalFile(files[0]);
+          }
+        },
+        (error) => alert(error)
+      );
   }
+
+  async function generatePhoto() {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    setLoading(true);
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ imageUrl: originalPhoto, theme, room }),
+    });
+
+    let response = (await res.json()) as GenerateResponseData;
+    if (res.status !== 200) {
+      setError(response as any);
+    } else {
+      mutate();
+      const rooms =
+        (JSON.parse(localStorage.getItem("rooms") || "[]") as string[]) || [];
+      rooms.push(response.id);
+      localStorage.setItem("rooms", JSON.stringify(rooms));
+      setRestoredImage(response.generated);
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 1300);
+  }
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.success === "true") {
+      toast.success("Payment successful!");
+    }
+  }, [router.query.success]);
 
   return (
     <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -137,13 +248,16 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                       aria-controls="panel1bh-content"
                       id="panel1bh-header"
                     >
-                      <Avatar alt="Remy Sharp" src="/avatar.png" />
+                      <Avatar
+                        alt="Remy Sharp"
+                        src={user.user?.image ? user.user.image : ""}
+                      />
                       <div className="usuario">
                         <Typography className={classes.subtitle}>
-                          Maria Fernanda
+                          {user.user?.name}
                         </Typography>
                         <Typography className={classes.body}>
-                          mariafernanda@gmail.com
+                          {user.user?.email}
                         </Typography>
                       </div>
                     </AccordionSummary>
@@ -211,12 +325,12 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                 >
                   <Box>
                     <Stack direction="column" spacing={2} alignItems={"center"}>
-                      <Typography className={classes.body}>
-                        Arraste sua foto aqui
-                      </Typography>
-                      <Typography className={classes.linkText}>
-                        ou clique aqui para importar
-                      </Typography>
+                      <Button
+                        onClick={uploadImage}
+                        className={classes.linkText}
+                      >
+                        Clique aqui para selecionar uma imagem
+                      </Button>
                     </Stack>
                   </Box>
                 </Paper>
@@ -232,7 +346,11 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                 >
                   {imagens.map((item, index) => (
                     <Grid item xs={2} sm={4} md={4} key={index}>
-                      <Button variant="text" sx={{ padding: 0, margin: 0 }}>
+                      <Button
+                        onClick={() => setTheme(themes[index])}
+                        variant="text"
+                        sx={{ padding: 0, margin: 0 }}
+                      >
                         <img
                           alt="Original photo of a room"
                           src={item.image}
@@ -244,6 +362,9 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                             padding: 0,
                             margin: 0,
                             borderRadius: 20,
+                            borderWidth: 2,
+                            borderColor: "#ccc",
+                            border: themes[index] === theme ? "solid" : "none",
                           }}
                           loading="lazy"
                         />
@@ -252,7 +373,12 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                   ))}
                 </Grid>
                 <Box>
-                  <Button color="primary" variant="contained" size="large">
+                  <Button
+                    onClick={generatePhoto}
+                    color="primary"
+                    variant="contained"
+                    size="large"
+                  >
                     <span>GERAR IMAGEM</span>
                   </Button>
                 </Box>

@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useContext } from "react";
 import PropTypes from "prop-types";
 import NextLink from "next/link";
 import {
@@ -20,6 +20,8 @@ import Logo from "./Logo";
 
 import { useTheme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
+import AuthContext from "../contexts/AuthContext";
+import { useSession } from "next-auth/react";
 
 interface HeaderProps {
   onSidebarMobileOpen?: () => void;
@@ -29,7 +31,7 @@ interface HeaderProps {
 const useStyles = makeStyles({
   navDisplayFlex: {
     display: "flex",
-    flexDirection: 'row'
+    flexDirection: "row",
   },
   linkText: {
     textDecoration: "none",
@@ -48,6 +50,7 @@ const navLinks = [
 const Header: FC<HeaderProps> = (props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { isAuthenticated } = useContext(AuthContext);
 
   const classes = useStyles();
 
@@ -73,7 +76,7 @@ const Header: FC<HeaderProps> = (props) => {
             alignItems="center"
             spacing={2}
           >
-            <NextLink href={`"/"`} style={{ margin: 0 }}>
+            <NextLink href={"/"} style={{ margin: 0 }}>
               {isMobile ? <Logo width={50} height={20} /> : <Logo />}
             </NextLink>
             <Box>
@@ -113,27 +116,30 @@ const Header: FC<HeaderProps> = (props) => {
             >
               <Link
                 color="textPrimary"
-                component="button"
                 underline="none"
                 variant="body1"
-                href="login"
+                href={
+                  isAuthenticated === "authenticated" ? "/dashboard" : "/login"
+                }
                 sx={{ fontSize: isMobile ? "0.8rem" : "1rem", fontWeight: 400 }}
               >
-                Login
+                {isAuthenticated === "authenticated" ? "Dashboard" : "Login"}
               </Link>
-              <Button
-                color="primary"
-                component="button"
-                size="large"
-                variant="contained"
-                sx={{
-                  fontSize: isMobile ? "0.8rem" : "1rem",
-                  fontWeight: 400,
-                  borderRadius: 10,
-                }}
-              >
-                Começar
-              </Button>
+              {isAuthenticated !== "authenticated" && (
+                <Button
+                  color="primary"
+                  component="button"
+                  size="large"
+                  variant="contained"
+                  sx={{
+                    fontSize: isMobile ? "0.8rem" : "1rem",
+                    fontWeight: 400,
+                    borderRadius: 10,
+                  }}
+                >
+                  Começar
+                </Button>
+              )}
             </Stack>
           </Stack>
         </Container>

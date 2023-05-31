@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-import Grid from "@mui/material/Unstable_Grid2";
+import useSWR from "swr";
 
 import {
   Box,
@@ -15,6 +15,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import Script from "next/script";
+import { useSession } from "next-auth/react";
 
 const useStyles = makeStyles({
   priceText: {
@@ -33,25 +35,34 @@ const useStyles = makeStyles({
 
 const plans = [
   {
-    title: "Free",
+    title: "Básico",
     description: "Faça até 03 imagens",
-    price: "0,00",
+    price: "10,00",
+    buyButtonId: "buy_btn_1NDe58CSFCiUm89eacqC0n3b",
+    publishableKey: "pk_test_iwIGX4fSviMAmcZxZuQDRxqm",
   },
   {
     title: "Profissional",
     description: "Faça até 20 imagens por dia",
     price: "49,90",
+    buyButtonId: "buy_btn_1NDe58CSFCiUm89eacqC0n3b",
+    publishableKey: "pk_test_iwIGX4fSviMAmcZxZuQDRxqm",
   },
 ];
 
 const Plans: NextPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { data: session } = useSession();
+
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const { data } = useSWR("/api/remaining", fetcher);
 
   const classes = useStyles();
 
   return (
     <>
+      <Script async src="https://js.stripe.com/v3/buy-button.js" />
       <Header />
       <Box
         sx={{
@@ -59,16 +70,35 @@ const Plans: NextPage = () => {
           justifyContent: "center",
           minHeight: "80vh",
           paddingTop: 10,
-          paddingBottom: 10
+          paddingBottom: 10,
         }}
       >
         <Container maxWidth="lg">
-          <Box sx={{ my: 5 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              my: 5,
+            }}
+          >
             <Typography
               sx={{ fontWeight: 700, fontSize: "2rem", color: "#3B2173" }}
             >
               Planos
             </Typography>
+            {session?.user?.email && (
+              <Box>
+                <Typography sx={{ color: "#3B2173" }}>
+                  Creditos, você tem atualmente{" "}
+                  <span className="font-semibold text-gray-400">
+                    {data?.remainingGenerations}{" "}
+                    {data?.remainingGenerations > 1 ? "credits" : "credit"}
+                  </span>
+                  . Purchase more below.
+                </Typography>
+              </Box>
+            )}
           </Box>
 
           <Stack
@@ -124,16 +154,26 @@ const Plans: NextPage = () => {
                   >
                     {plan.description}
                   </Typography>
-                  <Button
-                    color="primary"
-                    component="button"
-                    size="large"
-                    variant="contained"
-                    href="#"
-                    sx={{ borderRadius: 10 }}
-                  >
-                    Começar
-                  </Button>
+                  {session?.user?.email ? (
+                    // @ts-ignore
+                    <stripe-buy-button
+                      buy-button-id={plan.buyButtonId}
+                      publishable-key={plan.publishableKey}
+                      client-reference-id={session.user.email}
+                      customer-email={session.user.email}
+                    />
+                  ) : (
+                    <Button
+                      color="primary"
+                      component="button"
+                      size="large"
+                      variant="contained"
+                      href="/login"
+                      sx={{ borderRadius: 10 }}
+                    >
+                      Começar
+                    </Button>
+                  )}
                 </Stack>
               </Paper>
             ))}

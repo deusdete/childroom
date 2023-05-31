@@ -9,6 +9,7 @@ import en from "date-fns/locale/en-US";
 import es from "date-fns/locale/es";
 import { createTheme } from "../theme";
 import { ThemeProvider } from "@emotion/react";
+import { AuthProvider } from "../contexts/AuthContext";
 
 const locationDate = {
   br: pt,
@@ -27,8 +28,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     >
       <ThemeProvider theme={theme}>
         <SessionProvider session={session}>
-          <Component {...pageProps} />
-          <Analytics />
+          <AuthProvider>
+            <Component {...pageProps} />
+            <Analytics />
+          </AuthProvider>
         </SessionProvider>
       </ThemeProvider>
     </LocalizationProvider>

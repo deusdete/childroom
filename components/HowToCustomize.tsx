@@ -32,8 +32,8 @@ export default function HowToCustomize() {
           </Typography>
         </Box>
         <Stack direction={isMobile ? "column" : "row"} justifyContent="space-between">
-          {features.map((feature) => (
-            <Box sx={{ p: 5 }}>
+          {features.map((feature, index) => (
+            <Box key={index} sx={{ p: 5 }}>
               <Chip
                 label={feature.name}
                 sx={{ backgroundColor: "#FFD300", fontWeight: 700, mb: 2 }}

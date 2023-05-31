@@ -1,12 +1,12 @@
 import { NextPage } from "next";
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-import GoogleIcon from '@mui/icons-material/Google';
-import FacebookIcon from '@mui/icons-material/Facebook';
+import GoogleIcon from "@mui/icons-material/Google";
+import FacebookIcon from "@mui/icons-material/Facebook";
 
 import {
   Box,
@@ -17,9 +17,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { signIn } from "next-auth/react";
 
 const Login: NextPage = () => {
-
   return (
     <>
       <Box
@@ -27,7 +27,7 @@ const Login: NextPage = () => {
           backgroundColor: "#F0F3FC",
           justifyContent: "center",
           alignItens: "center",
-          minHeight:  "100vh",
+          minHeight: "100vh",
           padding: 0,
         }}
       >
@@ -39,69 +39,30 @@ const Login: NextPage = () => {
               Login
             </Typography>
           </Box>
-          
-              <CardContent className="box-login">
-              <Typography >Faça login e senha ou entre com uma conta existente.</Typography>
-                <Box
-                  sx={{
-                    width: 500,
-                    maxWidth: '100%',
-                    marginBottom: 2,
-                  }}
-                >
-                  <TextField fullWidth label="email" id="email" />
-                </Box>
-                <Box
-                  sx={{
-                    width: 500,
-                    maxWidth: '100%',
-                    marginBottom: 2,
-                  }}
-                >
-                  <TextField fullWidth label="senha" id="senha" />
-                </Box>
 
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                  ou
-                </Typography>
-                <Box
-                  sx={{
-                    width: 500,
-                    maxWidth: '100%',
-                    marginBottom: 2,
-                  }}
-                >
-                  <Button className="google" variant="contained" size="large" startIcon={<GoogleIcon />}>
-                    Google
-                  </Button>
-                </Box>
-                <Box
-                  sx={{
-                    width: 500,
-                    maxWidth: '100%',
-                    marginBottom: 2,
-                  }}
-                >
-                  <Button className="facebook" variant="contained" size="large" startIcon={<FacebookIcon />}>
-                    Facebook
-                  </Button>
-                </Box>
-                <Box
-                  sx={{
-                    width: 500,
-                    maxWidth: '100%',
-                  }}
-                >
-                  <Button variant="contained" size="large">
-                    Criar conta
-                  </Button>
-                </Box>
-               
-              </CardContent>
+          <CardContent className="box-login">
+            <Typography>Faça login com o Google.</Typography>
 
+            <Box
+              sx={{
+                width: 500,
+                maxWidth: "100%",
+                marginBottom: 2,
+              }}
+            >
+              <Button
+                className="google"
+                variant="contained"
+                size="large"
+                startIcon={<GoogleIcon />}
+                onClick={() => signIn("google")}
+              >
+                Google
+              </Button>
+            </Box>
+          </CardContent>
         </Container>
       </Box>
-      
     </>
   );
 };
