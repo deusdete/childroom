@@ -50,7 +50,7 @@ const FaleConosco: NextPage = () => {
           justifyContent: "center",
           minHeight: "60vh",
           paddingTop: 10,
-          paddingBottom: 10
+          paddingBottom: 20
         }}
       >
         <Container maxWidth="lg">
@@ -58,7 +58,7 @@ const FaleConosco: NextPage = () => {
             <Typography
               sx={{ fontWeight: 700, fontSize: "2rem", color: "#3B2173" }}
             >
-              Planos
+              Contato
             </Typography>
             <Typography
               sx={{ fontWeight: 400, fontSize: ".9rem", color: "#000" }}

@@ -70,7 +70,7 @@ const Plans: NextPage = () => {
           justifyContent: "center",
 
           paddingTop: 10,
-          paddingBottom: 5
+          paddingBottom: 5,
         }}
       >
         <Container maxWidth="lg">
@@ -95,7 +95,7 @@ const Plans: NextPage = () => {
                     {data?.remainingGenerations}{" "}
                     {data?.remainingGenerations > 1 ? "credits" : "credit"}
                   </span>
-                  . Purchase more below.
+                  . Compre mais abaixo.
                 </Typography>
               </Box>
             )}

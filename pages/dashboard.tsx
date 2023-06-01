@@ -5,6 +5,7 @@ import Link from "next/link";
 import Footer from "../components/Footer";
 import prisma from "../lib/prismadb";
 import useSWR from "swr";
+import FileSaver from "file-saver";
 import { Room } from "@prisma/client";
 import { useRouter } from "next/router";
 import { Toaster, toast } from "react-hot-toast";
@@ -36,6 +37,8 @@ import { GenerateResponseData } from "./api/generate";
 import { UploadDropzone } from "react-uploader";
 import { roomType, rooms, themeType, themes } from "../utils/dropdownTypes";
 import { UploadWidgetResult, Uploader } from "uploader";
+import { format } from "date-fns";
+import Image from "next/image";
 
 const useStyles = makeStyles({
   title: {
@@ -60,6 +63,19 @@ const useStyles = makeStyles({
     color: "#3B2173",
   },
   buttonLink: {},
+  originalImg: {
+    width: "100%",
+    height: "94%",
+    display: "relative",
+    borderRadius: 10,
+  },
+  restoredImg: {
+    width: "100%",
+    height: "94%",
+    display: "relative",
+    borderRadius: 10,
+    marginTop: 2,
+  },
 });
 
 const imagens = [
@@ -96,9 +112,10 @@ const uploader = Uploader({
 });
 
 export default function Dashboard({ rooms }: { rooms: Room[] }) {
+  console.log("rooms =>", rooms);
   const themeMui = useTheme();
   const isMobile = useMediaQuery(themeMui.breakpoints.down("sm"));
-  const { user } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
   const [expanded, setExpanded] = useState<string | false>(false);
 
   const handleChange =
@@ -158,12 +175,6 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
       .open({
         maxFileCount: 1,
         mimeTypes: ["image/jpeg", "image/png", "image/webp"],
-        editor: {
-          images: {
-            cropShape: "circ", // "rect" also supported.
-            cropRatio: 1 / 1, // "1" is enforced for "circ".
-          },
-        },
       })
       .then(
         (files) => {
@@ -204,6 +215,11 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
     }, 1300);
   }
 
+  const viewImageGerenate = (room: Room) => {
+    setRestoredImage(room.outputImage);
+    setOriginalPhoto(room.inputImage);
+  };
+
   const router = useRouter();
 
   useEffect(() => {
@@ -211,6 +227,13 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
       toast.success("Payment successful!");
     }
   }, [router.query.success]);
+
+  useEffect(() => {
+    // checks if the user is
+    if (status === "unauthenticated") {
+      router.push("/");
+    }
+  }, []);
 
   return (
     <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -261,11 +284,16 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                         </Typography>
                       </div>
                     </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography>Você tem 05/25 créditos.</Typography>
-                    </AccordionDetails>
+                    <AccordionDetails></AccordionDetails>
                   </Accordion>
-
+                  <Box>
+                    <Typography>
+                      Você tem {data?.remainingGenerations} créditos.{" "}
+                      <Link href={"/plans"}>
+                        <Typography>Comprar</Typography>
+                      </Link>
+                    </Typography>
+                  </Box>
                   <Divider />
 
                   <Typography className={classes.title}>
@@ -273,30 +301,50 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                   </Typography>
 
                   <div className="historico">
-                    {imagens.map((item) => (
-                      <Stack direction="row">
-                        <img
-                          alt="Original photo of a room"
-                          src={item.image}
-                          className="w-full object-cover h-40 rounded-2xl"
-                          style={{
-                            width: "45%",
-
-                            height: "auto",
-                            padding: 0,
-                            marginBottom: 10,
-                            borderRadius: 5,
-                          }}
-                          loading="lazy"
-                        />
+                    {rooms.map((room) => (
+                      <Stack direction="row" spacing={1}>
+                        <Button
+                          onClick={() => viewImageGerenate(room)}
+                          variant="text"
+                          sx={{ width: "45%", padding: 0, margin: 0 }}
+                        >
+                          <img
+                            alt="Original photo of a room"
+                            src={room.outputImage}
+                            className="w-full object-cover h-40 rounded-2xl"
+                            style={{
+                              display: "flex",
+                              width: "100%",
+                              maxWidth: "auto",
+                              height: "auto",
+                              padding: 0,
+                              margin: 0,
+                              borderRadius: 20,
+                            }}
+                            loading="lazy"
+                          />
+                        </Button>
                         <Stack spacing={1}>
                           <Typography className={classes.subtitle}>
                             Tema: <span>Aventura na selva</span>
                           </Typography>
                           <Typography className={classes.body}>
-                            Dia: 03/04/23 às 13:45
+                            Dia:{" "}
+                            {format(
+                              new Date(room.createdAt),
+                              "dd/MM/yyyy hh/mm/ss"
+                            )}
                           </Typography>
-                          <Button color="primary" variant="contained">
+                          <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={() =>
+                              FileSaver.saveAs(
+                                room.outputImage,
+                                `${room.id}.png`
+                              )
+                            }
+                          >
                             Download
                           </Button>
                         </Stack>
@@ -308,35 +356,117 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
             </Grid>
             <Grid item xs={12} md={8}>
               <Stack direction="column" spacing={2}>
-                <Typography className={classes.title}>
-                  1º - Faça o upload da sua foto
-                </Typography>
-                <Paper
-                  elevation={0}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    backgroundColor: "#fff",
-                    borderRadius: 5,
-                    width: "100%",
-                    height: 200,
-                  }}
-                >
-                  <Box>
-                    <Stack direction="column" spacing={2} alignItems={"center"}>
-                      <Button
-                        onClick={uploadImage}
-                        className={classes.linkText}
-                      >
-                        Clique aqui para selecionar uma imagem
-                      </Button>
-                    </Stack>
-                  </Box>
-                </Paper>
-                <Typography className={classes.title}>
-                  2º - Escolha seu tema preferido
-                </Typography>
+                {restoredImage && originalPhoto && !sideBySide && (
+                  <Grid
+                    container
+                    rowSpacing={1}
+                    columnSpacing={1}
+                    columns={{ xs: 6, sm: 12, md: 12 }}
+                  >
+                    <Grid item xs={12} sm={6} md={6}>
+                      <Typography className={classes.subtitle}>
+                        Quarto Original
+                      </Typography>
+                      <img
+                        alt="Original photo of a room"
+                        src={originalPhoto}
+                        style={{
+                          display: "flex",
+                          width: "100%",
+                          maxWidth: "auto",
+                          height: "auto",
+                          padding: 0,
+                          margin: 0,
+                          marginTop: 5,
+                          borderRadius: 10,
+                        }}
+                        loading="lazy"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={6}>
+                      <Typography className={classes.subtitle}>
+                        Quarto Gerada
+                      </Typography>
+                      <a href={restoredImage} target="_blank" rel="noreferrer">
+                        <img
+                          alt="Original photo of a room"
+                          src={restoredImage}
+                          style={{
+                            display: "flex",
+                            width: "100%",
+                            maxWidth: "auto",
+                            height: "auto",
+                            padding: 0,
+                            margin: 0,
+                            marginTop: 5,
+                            borderRadius: 10,
+                          }}
+                          loading="lazy"
+                        />
+                      </a>
+                    </Grid>
+                  </Grid>
+                )}
+
+                {!originalPhoto && (
+                  <>
+                    <Typography className={classes.title}>
+                      1º - Faça o upload da sua foto
+                    </Typography>
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        backgroundColor: "#fff",
+                        borderRadius: 5,
+                        height: 200,
+                      }}
+                    >
+                      {!restoredImage ? (
+                        <Box>
+                          <Stack
+                            direction="column"
+                            spacing={2}
+                            alignItems={"center"}
+                          >
+                            <Button
+                              onClick={uploadImage}
+                              className={classes.linkText}
+                            >
+                              Clique aqui para selecionar uma imagem
+                            </Button>
+                          </Stack>
+                        </Box>
+                      ) : (
+                        <img
+                          alt="Original photo of a room"
+                          src={restoredImage}
+                          style={{
+                            display: "flex",
+                            width: "100%",
+                            maxWidth: "auto",
+                            height: "auto",
+                            padding: 0,
+                            margin: 0,
+                            borderRadius: 20,
+                          }}
+                          loading="lazy"
+                        />
+                      )}
+                    </Paper>
+                  </>
+                )}
+                {restoredImage && originalPhoto && !sideBySide ? (
+                  <Typography className={classes.title}>
+                    Deseja gerar novas fotos com outros temas?
+                  </Typography>
+                ) : (
+                  <Typography className={classes.title}>
+                    2º - Escolha seu tema preferido
+                  </Typography>
+                )}
                 <Grid
                   container
                   rowSpacing={1}
@@ -372,16 +502,34 @@ export default function Dashboard({ rooms }: { rooms: Room[] }) {
                     </Grid>
                   ))}
                 </Grid>
-                <Box>
+                <Stack direction={"row"} spacing={2} alignItems={"center"}>
                   <Button
                     onClick={generatePhoto}
                     color="primary"
                     variant="contained"
                     size="large"
                   >
-                    <span>GERAR IMAGEM</span>
+                    <span>Gerar imagem</span>
                   </Button>
-                </Box>
+                  {originalPhoto && (
+                    <>
+                      <Typography>ou</Typography>
+                      <Button
+                        onClick={() => {
+                          setOriginalPhoto(null);
+                          setRestoredImage(null);
+                          setRestoredLoaded(false);
+                          setError(null);
+                        }}
+                        color="primary"
+                        variant="contained"
+                        size="large"
+                      >
+                        <span>Enviar nova imagem</span>
+                      </Button>
+                    </>
+                  )}
+                </Stack>
               </Stack>
             </Grid>
           </Grid>
@@ -404,11 +552,9 @@ export async function getServerSideProps(ctx: any) {
         email: session.user.email,
       },
     },
-    select: {
-      inputImage: true,
-      outputImage: true,
-    },
   });
+
+  rooms = JSON.parse(JSON.stringify(rooms));
 
   return {
     props: {

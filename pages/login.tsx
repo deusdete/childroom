@@ -1,9 +1,9 @@
+import { useEffect } from "react";
 import { NextPage } from "next";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -17,9 +17,20 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Login: NextPage = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    // checks if the user is
+    if (status === "authenticated") {
+      router.push("/dashboard");
+    }
+  }, [status]);
+
   return (
     <>
       <Box
@@ -54,10 +65,12 @@ const Login: NextPage = () => {
                 className="google"
                 variant="contained"
                 size="large"
-                startIcon={<GoogleIcon />}
+                startIcon={
+                  status === "loading" ? <CircularProgress /> : <GoogleIcon />
+                }
                 onClick={() => signIn("google")}
               >
-                Google
+                {status !== "loading" && "Google"}
               </Button>
             </Box>
           </CardContent>
